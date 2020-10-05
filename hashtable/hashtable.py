@@ -178,6 +178,7 @@ if __name__ == "__main__":
     # Test storing beyond capacity
     for i in range(1, 13):
         print(ht.get(f"line_{i}"))
+        print(ht.hash_index(f"line_{i}"))
 
     # Test resizing
     old_capacity = ht.get_num_slots()
