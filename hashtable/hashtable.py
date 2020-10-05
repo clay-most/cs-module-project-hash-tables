@@ -84,20 +84,16 @@ class HashTable:
         # self.store[index] = value
         index = self.hash_index(key)
         current_node = self.store[index]
-        old_node = None
         new_node = HashTableEntry(key, value)
-        if current_node:
-            while current_node:
-                if current_node.key == key:
-                    current_node.value = value
-                    return
-                old_node = current_node
-                current_node = current_node.next
-            old_node.next = current_node
+        prev = None
+        if current_node is None:
             self.store[index] = new_node
             self.size += 1
-        else:
-            self.store[index] = new_node
+            return
+        while current_node:
+            prev = current_node
+            current_node = current_node.next
+            prev.next = new_node
             self.size += 1
 
     def delete(self, key):
