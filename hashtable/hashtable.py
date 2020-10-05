@@ -8,7 +8,6 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
-
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
 
@@ -22,8 +21,8 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        self.capacity = capacity
         self.store = [None] * capacity
+        self.capacity = capacity
         self.size = 0
 
     def get_num_slots(self):
@@ -82,8 +81,24 @@ class HashTable:
 
         Implement this.
         """
-        self.store[self.hash_index(key)] = value
-        self.size +=1
+        # self.store[index] = value
+        index = self.hash_index(key)
+        current_node = self.store[index]
+        old_node = None
+        new_node = HashTableEntry(key, value)
+        if current_node:
+            while current_node:
+                if current_node.key == key:
+                    current_node.value = value
+                    return
+                old_node = current_node
+                current_node = current_node.next
+            old_node.next = current_node
+            self.store[index] = new_node
+            self.size += 1
+        else:
+            self.store[index] = new_node
+            self.size += 1
 
     def delete(self, key):
         """
@@ -93,8 +108,23 @@ class HashTable:
 
         Implement this.
         """
-        self.store[self.hash_index(key)] = None
-        self.size -= 1
+        # self.store[self.hash_index(key)] = None
+        old_node = None
+        index = self.hash_index(key)
+        current_node = self.store[index]
+        if current_node:
+            while current_node:
+                if current_node.key == key:
+                    if old_node:
+                        old_node.next = current_node.next
+                    else:
+                        self.store[index] = current_node.next
+                    self.size -= 1
+                old_node = current_node
+                current_node = current_node.next
+                self.size -= 1
+        else:
+            print("Oops! I can't find that key")
 
     def get(self, key):
         """
@@ -104,7 +134,14 @@ class HashTable:
 
         Implement this.
         """
-        return self.store[self.hash_index(key)]
+        # return self.store[self.hash_index(key)]
+        index = self.hash_index(key)
+        current_node = self.store[index]
+        while current_node:
+            if current_node.key == key:
+                return current_node.value
+            current_node = current_node.next
+        return None    
 
     def resize(self, new_capacity):
         """
@@ -114,7 +151,14 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        pass
+        old_store = self.store
+        self.store = [None] * new_capacity
+        self.capacity = new_capacity
+
+        for item in old_store:
+            while item is not None:
+                self.put(item.key, item.value)
+                item = item.next
 
 
 if __name__ == "__main__":
